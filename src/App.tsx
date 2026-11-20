@@ -125,15 +125,27 @@ export default function App() {
 
     const prompt = `# PROMPT RENDERING ARSITEKTUR REALISTIK
 
-## INSTRUKSI UTAMA
+## INSTRUKSI UTAMA (HIGHEST PRIORITY RULES)
 Transform the uploaded sketch/massing model image into a photorealistic architectural rendering that looks like a real photograph. The output must be indistinguishable from an actual photograph taken on-site.
+
+### 🚨 ABSOLUTE RULE - READ THIS FIRST:
+You MUST NOT change the composition or ANY object in the reference image. This is the #1 rule and overrides all other instructions.
+
+- DO NOT modify, move, resize, rotate, add, or remove ANY object that exists in the reference image
+- DO NOT alter the composition, arrangement, or spatial relationships of ANY elements
+- The reference image is SACRED - treat every pixel of existing content as unchangeable
+- You may ONLY enhance existing elements with realistic textures/materials WITHOUT changing their form
+- You may ONLY add new content to areas that are COMPLETELY EMPTY/BLANK in the reference
+- EXCEPTION: You may modify specific elements ONLY if the user has EXPLICITLY requested it in the "ADDITIONAL CUSTOM REQUIREMENTS" section below. No other modifications are permitted.
 
 ## FUNGSI BANGUNAN
 This building complex functions as: ${buildingFunc}
 Apply appropriate architectural details, signage, materials, and design elements consistent with this building function.
 
-## GEOMETRI LOCK - ANALISA PERSPEKTIF (STRICT RULE)
-CRITICAL: Before rendering, perform a thorough geometric analysis of the reference image:
+## GEOMETRI LOCK - COMPOSITION & PERSPECTIVE (ABSOLUTE RULE)
+CRITICAL: Before rendering, perform a thorough geometric and compositional analysis of the reference image:
+
+### PERSPECTIVE LOCK:
 1. Identify and LOCK all vanishing points (1-point, 2-point, or 3-point perspective)
 2. Preserve ALL existing lines, edges, and proportions exactly as shown in the reference
 3. Maintain the exact camera angle, height, and field of view
@@ -143,15 +155,38 @@ CRITICAL: Before rendering, perform a thorough geometric analysis of the referen
 7. The scale and proportion of every element must remain identical to the reference
 8. DO NOT add, remove, or reposition any structural element that exists in the reference image
 
-## STRICT PRESERVATION RULE (MANDATORY)
-⚠️ CRITICAL RULE: You are STRICTLY PROHIBITED from adding ANY objects, elements, or details that would cover, overlap, or obscure ANYTHING that already exists in the reference image. 
+### COMPOSITION LOCK:
+9. The OVERALL COMPOSITION must remain IDENTICAL to the reference image
+10. Every object's position, size, orientation, and relationship to other objects MUST be preserved
+11. The visual balance, focal points, and spatial arrangement must not change
+12. Foreground, midground, and background elements must maintain their exact placement
+13. Do NOT crop, extend, or alter the frame/boundary of the image in any way
+14. Do NOT add new objects into the composition unless the area is completely empty AND no existing object is affected
+15. The "visual weight" and hierarchy of elements must remain unchanged
 
-- Every line, shape, mass, and element visible in the reference image MUST be preserved exactly as-is
-- You may ONLY add details, textures, materials, and environmental elements to areas that are EMPTY or BLANK in the reference image
-- Do NOT place furniture, vehicles, people, trees, or any objects on top of existing building elements
-- Do NOT modify the silhouette or outline of any building mass shown in the reference
-- Think of the reference image as a "mask" - existing elements are protected zones where nothing new can be added
-- Only fill in the voids/empty spaces with appropriate environmental and contextual elements
+## STRICT PRESERVATION RULE (MANDATORY)
+⚠️ CRITICAL RULE: You are STRICTLY PROHIBITED from making ANY changes to the composition and objects in the reference image.
+
+### ABSOLUTE PROHIBITIONS:
+- Do NOT alter, move, resize, rotate, or reposition ANY object or element that exists in the reference image
+- Do NOT add, remove, or modify ANY architectural element (walls, roofs, windows, doors, columns, beams, etc.)
+- Do NOT change the shape, silhouette, outline, or massing of ANY building or structure
+- Do NOT add, remove, or modify ANY object (trees, vehicles, people, furniture, signage, etc.) that appears in the reference
+- Do NOT change the spatial relationship, relative position, or scale between ANY elements
+- Do NOT alter the composition, framing, or arrangement of ANY visual elements
+- Do NOT modify colors, materials, or textures of existing elements (unless explicitly requested in ADDITIONAL DATA)
+- Do NOT add any new objects that would overlap, cover, or obscure existing elements in the reference image
+
+### WHAT YOU MAY DO:
+- You may ONLY add details, textures, materials, and environmental elements to areas that are COMPLETELY EMPTY or BLANK in the reference image
+- You may ONLY modify elements that are EXPLICITLY specified in the "ADDITIONAL CUSTOM REQUIREMENTS" section below
+- If the user requests changes to specific elements in the additional data, those specific changes are ALLOWED, but ONLY for those explicitly mentioned elements
+
+### EXCEPTION CLAUSE:
+The ONLY exception to these rules is when the user EXPLICITLY requests changes in the "ADDITIONAL CUSTOM REQUIREMENTS" section. In that case:
+- Only the SPECIFICALLY MENTIONED elements may be modified
+- All other elements must still follow the strict preservation rules
+- The modification must be limited to exactly what was requested, nothing more
 
 ## BACKGROUND & ENVIRONMENT (for empty areas only)
 Fill all empty/blank areas in the reference image with the following background:
@@ -197,14 +232,35 @@ Apply appropriate:
 - Anti-aliasing: Perfect, no jagged edges
 - Global illumination: Physically accurate light bouncing and color bleeding
 
-${additional ? `## ADDITIONAL CUSTOM REQUIREMENTS\n${additional}\n` : ''}## OUTPUT REQUIREMENTS
+${additional ? `## ADDITIONAL CUSTOM REQUIREMENTS (USER-SPECIFIED EXCEPTIONS)
+The following are EXPLICIT exceptions granted by the user. ONLY these specific modifications are allowed:
+${additional}
+
+⚠️ IMPORTANT: Any modification NOT listed above is STRICTLY PROHIBITED. All other elements from the reference image must remain completely unchanged.
+` : `## NO ADDITIONAL MODIFICATIONS REQUESTED
+The user has NOT requested any modifications to existing elements. ALL elements in the reference image must be preserved EXACTLY as-is without any changes whatsoever. Only empty/blank areas may be filled with environmental context.
+`}## OUTPUT REQUIREMENTS
 The final image must:
 1. Look like a photograph taken with a professional camera on-site
 2. Have consistent lighting across all elements
 3. Show proper atmospheric perspective (distant elements slightly hazier)
 4. Include subtle environmental details (dust particles, light rays, etc.)
 5. Have no AI artifacts, warping, or unrealistic elements
-6. Maintain exact geometric fidelity to the reference image`;
+6. Maintain EXACT geometric fidelity to the reference image
+7. Preserve EVERY SINGLE OBJECT and its exact position from the reference image
+8. Maintain the IDENTICAL composition - no element may be moved, added, or removed
+9. All existing objects must be rendered with enhanced realism but UNCHANGED in form, position, and proportion
+10. The only differences between the reference and output should be: (a) added realism/detail to empty areas, (b) enhanced material textures on existing surfaces, and (c) any EXPLICITLY requested changes in the additional data section
+
+## FINAL VERIFICATION CHECKLIST
+Before finalizing the output, verify:
+☐ Every object from the reference is present in the exact same position
+☐ No new objects have been placed on top of existing elements
+☐ The composition is identical to the reference
+☐ All geometric relationships are preserved
+☐ Only empty areas have been filled with contextual elements
+☐ Any modifications match EXACTLY what was requested in additional data (if any)
+☐ No elements have been accidentally removed, hidden, or obscured`;
 
     setGeneratedPrompt(prompt);
     setCopied(false);
@@ -634,24 +690,36 @@ The final image must:
             {/* Rules Reminder */}
             <div className="bg-red-500/5 rounded-2xl border border-red-500/20 p-5 mb-6">
               <h3 className="text-sm font-semibold text-red-300 mb-3 flex items-center gap-2">
-                <span>⚠️</span> Aturan Ketat dalam Prompt
+                <span>⚠️</span> Aturan Ketat dalam Prompt (Strict Rules)
               </h3>
               <ul className="space-y-2 text-xs text-slate-400">
                 <li className="flex items-start gap-2">
                   <span className="text-red-400 mt-0.5">●</span>
-                  <span>DILARANG menambahkan benda apapun yang menutupi elemen yang sudah ada di gambar referensi</span>
+                  <span><strong className="text-red-300">DILARANG KERAS</strong> mengubah komposisi, posisi, ukuran, atau orientasi objek APAPUN yang ada di gambar referensi</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-red-400 mt-0.5">●</span>
-                  <span>HANYA boleh mengisi area yang kosong/kosong pada gambar referensi</span>
+                  <span><strong className="text-red-300">DILARANG</strong> menambahkan, menghapus, atau memodifikasi elemen arsitektur yang sudah ada (dinding, atap, jendela, pintu, kolom, dll)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-red-400 mt-0.5">●</span>
-                  <span>Geometri dan perspektif WAJIB dipertahankan persis seperti referensi (LOCK)</span>
+                  <span><strong className="text-red-300">DILARANG</strong> menambahkan benda apapun yang menutupi/menimpa elemen yang sudah ada di gambar referensi</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-red-400 mt-0.5">●</span>
-                  <span>Semua garis, bentuk, dan proporsi harus identik dengan gambar asli</span>
+                  <span>HANYA boleh mengisi area yang BENAR-BENAR KOSONG pada gambar referensi</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-red-400 mt-0.5">●</span>
+                  <span>Geometri, perspektif, dan komposisi WAJIB dipertahankan persis seperti referensi (LOCK TOTAL)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-red-400 mt-0.5">●</span>
+                  <span>Semua garis, bentuk, proporsi, dan hubungan spasial harus identik dengan gambar asli</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-400 mt-0.5">●</span>
+                  <span><strong className="text-green-300">PENGECUALIAN:</strong> Perubahan hanya diperbolehkan JIKA diminta secara eksplisit di kolom "Data Tambahan"</span>
                 </li>
               </ul>
             </div>
